@@ -6,12 +6,12 @@ import {AggregatorV3Interface} from "@chainlink/contracts/src/v0.8/shared/interf
 // A revert undoes any action, and send the remaining gas back.
 contract FundMe {
     address constant ETH_IN_USD_CHAINLINK_CONTRACT = 0x694AA1769357215DE4FAC081bf1f309aDC325306;
-    uint256 public minimumUSD = 5;
+    uint256 public minimumUSD = 5e18;
     uint256 public myVar = 1;
     // The tx reverts if less than 1 Ether is sent.
     function fund() public payable {
         myVar = myVar + 1;
-        require(msg.value > 1e18, "didn't send enough Eth");  // 1e18 = 1 Eth = 1 * 10 ** 18 Wei
+        require(getConversionRate(msg.value) >= minimumUSD, "didn't send enough Eth");  // 1e18 = 1 Eth = 1 * 10 ** 18 Wei
         // myVar equals 1 id the tx is reverted.
     }
 
@@ -31,6 +31,13 @@ contract FundMe {
         ( , int256 price, , ,) = priceFeed.latestRoundData();  // Five values are returned by this function
         // 8 to 18 decimals conversion
         return uint256(price * 1e10);
+    }
+
+    function getConversionRate(uint256 ethAmount) public view returns (uint256) {
+        uint256 ethPrice = getPrice();
+        // Always multiply before you divide
+        uint256 ethAmountInUsd = (ethPrice * ethAmount) / 1e18;
+        return ethAmountInUsd;
     }
 
     function withdraw() public {
