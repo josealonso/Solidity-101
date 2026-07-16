@@ -16,7 +16,7 @@ contract FundMe {
         require(PriceConverter.getConversionRate(msg.value) >= minimumUSD, "didn't send enough Eth");  // 1e18 = 1 Eth = 1 * 10 ** 18 Wei
         require(msg.value.getConversionRate() >= minimumUSD, "didn't send enough Eth");  // 1e18 = 1 Eth = 1 * 10 ** 18 Wei
         funders.push(msg.sender);
-        addressToAmountFunded[msg.sender] = addressToAmountFunded[msg.sender] + msg.value;
+        addressToAmountFunded[msg.sender] += msg.value;
     }
    
     /* Transactions - Fields
@@ -31,7 +31,10 @@ contract FundMe {
 
    
     function withdraw() public {
-
+        for (uint256 fundersIndex = 0; fundersIndex < funders.length; fundersIndex++) {
+            address funder = funders[fundersIndex];
+            addressToAmountFunded[funder] = 0;
+        }
     }
 
 }
