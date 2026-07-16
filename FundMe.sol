@@ -64,6 +64,19 @@ contract FundMe {
         _;
     }
 
+    /*
+    receive and fallback are special functions triggered when users send Ether directly to the contract or call non-existent functions. 
+    These functions do not return anything and must be declared external.
+    - When Ether is sent to the contract, the receive function is triggered. 
+    - If a transaction includes data but the specified function does not exist, the fallback function will be triggered
+    */
+    receive() external payable { 
+        fund();
+    }
+
+    fallback() external payable {
+        fund();
+    }
 }
 
 // Blockchains are deterministic systems
