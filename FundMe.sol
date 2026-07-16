@@ -37,7 +37,16 @@ contract FundMe {
         }
         // Reset an array
         funders = new address[](0);  // Second meaning of the "new" keyword
-
+        // withdraw the funds ---> Three ways: transfer, send and call.
+        // 1.- transfer
+        // throws an exception if not sent
+        payable(msg.sender).transfer(address(this).balance); // transfer is deprecated
+        // 2.- send
+        bool successfullySent = payable(msg.sender).send(address(this).balance); // send is deprecated
+        require(successfullySent, "Send failed");
+        // 3.- call (recommended)
+        (bool callSuccess, ) = payable(msg.sender).call{value: 2}("");  
+        require(callSuccess, "Call failed");
     }
 
 }
