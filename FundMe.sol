@@ -3,6 +3,8 @@ pragma solidity ^0.8.18;
 
 import {PriceConverter} from "./PriceConverter.sol";
 
+error NotOwner();
+
 contract FundMe {
     
     using PriceConverter for uint256;  // This allows to use "extension functions"
@@ -56,7 +58,9 @@ contract FundMe {
     }
 
     modifier onlyOwner {
-        require(msg.sender == owner, "Must be owner!");
+        // require(msg.sender == owner, "Must be owner!");
+        // Custom errors are pretty new in Solidity
+        if(msg.sender != owner) { revert NotOwner(); }
         _;
     }
 
