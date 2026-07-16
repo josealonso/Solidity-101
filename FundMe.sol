@@ -7,11 +7,11 @@ contract FundMe {
     
     using PriceConverter for uint256;  // This allows to use "extension functions"
 
-    uint256 public minimumUSD = 5e18;
+    uint256 public constant MINIMUM_USD = 50 * 1e18;
     address[] funders;
     mapping(address funder => uint256 amountFunded) public addressToAmountFunded; 
 
-    address public owner;
+    address public immutable owner;
 
     constructor() {
         owner = msg.sender;  // The deployer is the owner
@@ -19,8 +19,8 @@ contract FundMe {
 
     function fund() public payable {
         // The next two lines are equivalent
-        require(PriceConverter.getConversionRate(msg.value) >= minimumUSD, "didn't send enough Eth");  // 1e18 = 1 Eth = 1 * 10 ** 18 Wei
-        require(msg.value.getConversionRate() >= minimumUSD, "didn't send enough Eth");  // 1e18 = 1 Eth = 1 * 10 ** 18 Wei
+        require(PriceConverter.getConversionRate(msg.value) >= MINIMUM_USD, "didn't send enough Eth");  // 1e18 = 1 Eth = 1 * 10 ** 18 Wei
+        require(msg.value.getConversionRate() >= MINIMUM_USD, "didn't send enough Eth");  // 1e18 = 1 Eth = 1 * 10 ** 18 Wei
         funders.push(msg.sender);
         addressToAmountFunded[msg.sender] += msg.value;
     }
